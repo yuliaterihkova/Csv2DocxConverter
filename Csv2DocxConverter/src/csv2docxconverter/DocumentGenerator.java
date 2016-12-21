@@ -28,7 +28,7 @@ public class DocumentGenerator {
     /**
     * Generate DocX element from list of the rows containing account information
     */        
-    public static XWPFDocument GenerateDocx(List content){
+    public static XWPFDocument generateDocx(List content){
         XWPFDocument document = new XWPFDocument();
 
         // create title

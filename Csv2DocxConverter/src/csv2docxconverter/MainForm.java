@@ -197,7 +197,7 @@ public class MainForm extends javax.swing.JFrame {
         
         try { 
             // generate DocX document
-            XWPFDocument document = DocumentGenerator.GenerateDocx(content);
+            XWPFDocument document = DocumentGenerator.generateDocx(content);
             // save document to file
             document.write(new FileOutputStream(new File(outputFile)));
             document.close();
