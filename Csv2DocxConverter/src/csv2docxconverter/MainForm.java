@@ -27,7 +27,7 @@ public class MainForm extends javax.swing.JFrame {
     /**
     *  Columns represented in csv file   
     */ 
-    private final String[] columns = new String[]{ "First Name", "Last Name", "Email Address", "Password", "Secondary Email", "Mobile Phone", "Department"};
+    private final String[] COLUMNS = new String[]{ "First Name", "Last Name", "Email Address", "Password", "Secondary Email", "Mobile Phone", "Department"};
    
     private String inputFile;
     private String outputFile;
@@ -203,7 +203,7 @@ public class MainForm extends javax.swing.JFrame {
         try { 
             DocumentGenerator generator = new DocumentGenerator();
             // generate DocX document
-            XWPFDocument document = generator.generateDocx(columns, content);
+            XWPFDocument document = generator.generateDocx(COLUMNS, content);
             // save document to file
             document.write(new FileOutputStream(new File(outputFile)));
             document.close();
