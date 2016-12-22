@@ -70,7 +70,7 @@ public class DocumentGenerator {
     /**
     * Create header for a table
     */  
-    private static void setHeader(XWPFTable table, String[] columns){
+    private void setHeader(XWPFTable table, String[] columns){
         // set initial cell
         XWPFTableRow tableRowOne = table.getRow(0);    
         XWPFTableCell cell = tableRowOne.getCell(0);
@@ -88,7 +88,7 @@ public class DocumentGenerator {
     /**
     * Set header cell style
     */ 
-    private static XWPFRun setHeaderCell(XWPFTableCell cell){
+    private XWPFRun setHeaderCell(XWPFTableCell cell){
         cell.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
         
         XWPFParagraph paragraph = cell.getParagraphArray(0);
@@ -105,7 +105,7 @@ public class DocumentGenerator {
     /**
     * Set body cell style
     */ 
-    private static XWPFRun setBodyCell(XWPFTableCell cell){
+    private XWPFRun setBodyCell(XWPFTableCell cell){
         cell.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
         
         XWPFParagraph paragraph = cell.getParagraphArray(0);
