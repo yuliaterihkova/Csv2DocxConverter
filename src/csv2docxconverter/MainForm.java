@@ -7,7 +7,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
@@ -23,14 +26,9 @@ public class MainForm extends javax.swing.JFrame {
     public MainForm() {
         initComponents();
     }
-    
-    /**
-    *  Columns represented in csv file   
-    */ 
-    private final String[] COLUMNS = new String[]{ "First Name", "Last Name", "Email Address", "Password", "Secondary Email", "Mobile Phone", "Department"};
-   
-    private String inputFile;
-    private String outputFile;
+
+    private String inputDirectory;
+    private String outputDirectory;
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -48,6 +46,8 @@ public class MainForm extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         GenerateButton = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        ColumnsTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("CSV2DOCX");
@@ -55,7 +55,7 @@ public class MainForm extends javax.swing.JFrame {
         setResizable(false);
 
         InputTextField.setEditable(false);
-        InputTextField.setText("Choose file location...");
+        InputTextField.setText("Choose files directory...");
         InputTextField.setToolTipText("");
 
         ChooseInputButton.setText("Choose");
@@ -88,12 +88,13 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Input CSV file");
+        jLabel1.setText("Input CSV files");
 
-        jLabel2.setText("Output DOC\\DOCX file");
+        jLabel2.setText("Output DOC\\DOCX files");
 
         GenerateButton.setText("Generate");
         GenerateButton.setToolTipText("");
+        GenerateButton.setEnabled(false);
         GenerateButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         GenerateButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
         GenerateButton.setMaximumSize(new java.awt.Dimension(75, 23));
@@ -105,13 +106,18 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
+        jLabel3.setText("CSV columns");
+
+        ColumnsTextField.setText("1, 2, 3");
+        ColumnsTextField.setToolTipText("Comma-separated column nubers or empty to use all");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(InputTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -122,7 +128,9 @@ public class MainForm extends javax.swing.JFrame {
                         .addComponent(OutputTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(6, 6, 6)
                         .addComponent(ChooseOuputButton, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(GenerateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(GenerateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3)
+                    .addComponent(ColumnsTextField))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -142,7 +150,11 @@ public class MainForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(OutputTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ChooseOuputButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ColumnsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21)
                 .addComponent(GenerateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -154,66 +166,111 @@ public class MainForm extends javax.swing.JFrame {
      * Choose input file event handler
      */
     private void ChooseInputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChooseInputButtonActionPerformed
-        FileDialog dialog = new FileDialog(this, "Choose a file", FileDialog.LOAD);
-        dialog.setDirectory("C:\\");
-        dialog.setFile("*.csv");
-        dialog.setVisible(true);
+        JFileChooser dialog = new JFileChooser();
+        dialog.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        dialog.setDialogTitle("Choose a directory");
         
-        String filename = dialog.getDirectory() + "\\" + dialog.getFile();
-        if (filename == null){
-            InputTextField.setText("Choose file location...");
+        if (dialog.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File file = dialog.getSelectedFile();
+            inputDirectory = file.getAbsolutePath();
+            InputTextField.setText(inputDirectory);
+        } else {
+            InputTextField.setText("Choose files directory...");
         }
-        else{
-            inputFile = filename;
-            InputTextField.setText(inputFile);
-        }
+        
+        boolean enabled = inputDirectory != null && outputDirectory != null;
+        GenerateButton.setEnabled(enabled);
     }//GEN-LAST:event_ChooseInputButtonActionPerformed
     /**
      * Choose output file event handler
      */
     private void ChooseOuputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChooseOuputButtonActionPerformed
-        FileDialog dialog = new FileDialog(this, "Choose a file", FileDialog.SAVE);
-        dialog.setDirectory("C:\\");
-        dialog.setFile("*.docx");
-        dialog.setVisible(true);
+        JFileChooser dialog = new JFileChooser();
+        dialog.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        dialog.setDialogTitle("Choose a directory");
         
-        String filename = dialog.getDirectory() + "\\" + dialog.getFile();
-        if (filename == null){
-            OutputTextField.setText("Choose file location...");
-        }
-        else{
-            outputFile = filename;
-            OutputTextField.setText(outputFile);
-        }
+        if (dialog.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File file = dialog.getSelectedFile();
+            outputDirectory = file.getAbsolutePath();
+            OutputTextField.setText(outputDirectory);
+        } else {
+            OutputTextField.setText("Choose files directory...");
+        }  
+        
+        boolean enabled = inputDirectory != null && outputDirectory != null;
+        GenerateButton.setEnabled(enabled);
     }//GEN-LAST:event_ChooseOuputButtonActionPerformed
     /**
      * Convert file event handler
      */
     private void GenerateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GenerateButtonActionPerformed
-        List content = null;    
-    
-        try {
-            // read data from cvs file
-            CSVReader reader = new CSVReader(new FileReader(inputFile));
-            content = reader.readAll();
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        // load column numbers
+        String columnsText = ColumnsTextField.getText();
+        String[] columns = columnsText.trim().split(",");
+        int[] columnNumbers = new int[columns.length];       
+        for(int i = 0; i < columnNumbers.length; i++){
+            columnNumbers[i] =  Integer.parseInt(columns[i].trim());
         }
         
-        try { 
-            DocumentGenerator generator = new DocumentGenerator();
-            // generate DocX document
-            XWPFDocument document = generator.generateDocx(COLUMNS, content);
-            // save document to file
-            document.write(new FileOutputStream(new File(outputFile)));
-            document.close();
-        } catch (FileNotFoundException ex) {
-            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        List content = null;   
+        
+        try {
+            List files = loadFiles(inputDirectory, "csv");
+            for (Object object : files) {
+                File file = (File)object;
+                String path = file.getAbsolutePath();
+
+                CSVReader reader = new CSVReader(new FileReader(path));
+                content = reader.readAll();
+                
+                DocumentGenerator generator = new DocumentGenerator();
+                // generate DocX document
+                XWPFDocument document = generator.generateDocx(columnNumbers, content);
+                // save document to file
+                String name = outputDirectory + "\\" + getFileName(file) + ".docx";
+                document.write(new FileOutputStream(new File(name)));
+                document.close();
+            }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_GenerateButtonActionPerformed
-
+                                                     
+    /**
+     * Load list of files
+     * @param folderPath path to file folder
+     * @param fileExtension loading files extension
+     */
+    private List loadFiles(String folderPath, String fileExtension) {   
+        File directory = new File(folderPath);
+        File[] listOfFiles = directory.listFiles();
+        
+        List files = new ArrayList();
+        for (File file : listOfFiles) {
+            if (file.isFile() && getFileExtension(file).equals(fileExtension)) {
+                files.add(file);
+            }
+        }
+        
+        return files;
+    }
+    /**
+     * Get file name
+     * @param file file for name extraction
+     */
+    private String getFileName(File file) {
+        String name = file.getName();
+        return name.substring(0, name.lastIndexOf("."));
+    }
+    /**
+     * Get file extension
+     * @param file extension for name extraction
+     */
+    private String getFileExtension(File file) {
+        String name = file.getName();
+        return name.substring(name.lastIndexOf(".") + 1);
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -252,11 +309,13 @@ public class MainForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ChooseInputButton;
     private javax.swing.JButton ChooseOuputButton;
+    private javax.swing.JTextField ColumnsTextField;
     private javax.swing.ButtonGroup FileTypeButtonGroup;
     private javax.swing.JButton GenerateButton;
     private javax.swing.JTextField InputTextField;
     private javax.swing.JTextField OutputTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     // End of variables declaration//GEN-END:variables
 }

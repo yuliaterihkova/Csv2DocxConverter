@@ -27,7 +27,7 @@ public class DocumentGenerator {
      * @param content list of data rows for parsing
      * @return an XWPFDocument representing a DocX file
     */        
-    public XWPFDocument generateDocx(String[] columns, List content){
+    public XWPFDocument generateDocx(int[] columnNumbers, List content){
         XWPFDocument document = new XWPFDocument();
 
         // create title
@@ -43,10 +43,10 @@ public class DocumentGenerator {
         table.getCTTbl().addNewTblPr().addNewTblW().setW(BigInteger.valueOf(10000));
         
         //create header for table
-        setHeader(table, columns);
+        setHeader(table, columnNumbers);
         
         // if account list is empty
-        if(content == null){
+        if(content == null || content.size() == 0){
             // add empty row to the table
             XWPFTableRow emptyRow = table.createRow();
         }else{
@@ -56,10 +56,16 @@ public class DocumentGenerator {
                 
                 XWPFTableRow row = table.createRow();
                 //create cells in a row
-                for(int i = 0; i < csvRow.length; i++){
+                for(int i = 0; i < columnNumbers.length; i++){
+                    int number = columnNumbers[i];
+                    
                     XWPFTableCell cell = row.getCell(i);
-                    XWPFRun run = setBodyCell(cell);
-                    run.setText(csvRow[i]);
+                    if(cell != null){
+                        XWPFRun run = setBodyCell(cell);
+                        if(number - 1 <= csvRow.length){
+                            run.setText(csvRow[number - 1]);
+                        }
+                    }
                 }
             }
         }
@@ -70,18 +76,22 @@ public class DocumentGenerator {
     /**
     * Create header for a table
     */  
-    private void setHeader(XWPFTable table, String[] columns){
+    private void setHeader(XWPFTable table, int[] columnNumbers){
         // set initial cell
         XWPFTableRow tableRowOne = table.getRow(0);    
-        XWPFTableCell cell = tableRowOne.getCell(0);
-        XWPFRun run = setHeaderCell(cell);
-        run.setText(columns[0]);
-        
+
         // add other cells
-        for(int i = 1; i < columns.length; i++){
-            cell = tableRowOne.addNewTableCell();
-            run = setHeaderCell(cell);
-            run.setText(columns[i]);
+        for(int i = 0; i < columnNumbers.length; i++){
+            int number = columnNumbers[i];
+             
+            XWPFTableCell cell;
+            if(i == 0){
+                cell = tableRowOne.getCell(0);
+            }else{
+                cell = tableRowOne.addNewTableCell();
+            }
+            XWPFRun run = setHeaderCell(cell);
+            run.setText(Integer.toString(number));
         }
     }
     

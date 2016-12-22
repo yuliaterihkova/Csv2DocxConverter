@@ -32,9 +32,9 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="InputTextField" min="-2" pref="211" max="-2" attributes="0"/>
@@ -47,7 +47,9 @@
                       <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
                       <Component id="ChooseOuputButton" min="-2" pref="77" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="GenerateButton" alignment="0" min="-2" pref="294" max="-2" attributes="0"/>
+                  <Component id="GenerateButton" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="ColumnsTextField" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -73,7 +75,11 @@
                   <Component id="OutputTextField" min="-2" max="-2" attributes="0"/>
                   <Component id="ChooseOuputButton" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="ColumnsTextField" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
               <Component id="GenerateButton" min="-2" pref="38" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -84,7 +90,7 @@
     <Component class="javax.swing.JTextField" name="InputTextField">
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
-        <Property name="text" type="java.lang.String" value="Choose file location..."/>
+        <Property name="text" type="java.lang.String" value="Choose files directory..."/>
         <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>
     </Component>
@@ -141,18 +147,19 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Input CSV file"/>
+        <Property name="text" type="java.lang.String" value="Input CSV files"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Output DOC\u005cDOCX file" containsInvalidXMLChars="true"/>
+        <Property name="text" type="java.lang.String" value="Output DOC\u005cDOCX files" containsInvalidXMLChars="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="GenerateButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Generate"/>
         <Property name="toolTipText" type="java.lang.String" value=""/>
+        <Property name="enabled" type="boolean" value="false"/>
         <Property name="horizontalTextPosition" type="int" value="0"/>
         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
           <Insets value="[2, 10, 2, 10]"/>
@@ -170,6 +177,17 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="GenerateButtonActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel3">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="CSV columns"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="ColumnsTextField">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="1, 2, 3"/>
+        <Property name="toolTipText" type="java.lang.String" value="Comma-separated column nubers or empty to use all"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>
