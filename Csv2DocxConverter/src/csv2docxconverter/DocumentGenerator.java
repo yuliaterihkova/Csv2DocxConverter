@@ -16,19 +16,18 @@ import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 
 /**
- *
+ * Class encapsulating DocX file generation logic
  * @author Yulia Terikhova
  */
 public class DocumentGenerator {
-    /**
-    *  Columns represented in csv file   
-    */ 
-    private static final String[] columns = new String[]{ "First Name", "Last Name", "Email Address", "Password", "Secondary Email", "Mobile Phone", "Department"};
-   
+    
     /**
     * Generate DocX element from list of the rows containing account information
+     * @param columns a list of columns for data parsing
+     * @param content list of data rows for parsing
+     * @return an XWPFDocument representing a DocX file
     */        
-    public static XWPFDocument generateDocx(List content){
+    public XWPFDocument generateDocx(String[] columns, List content){
         XWPFDocument document = new XWPFDocument();
 
         // create title

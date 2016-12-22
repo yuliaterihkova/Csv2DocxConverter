@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 /**
- *
+ * Class encapsulating Main form generation and event handling logic
  * @author Yulia Terikhova
  */
 public class MainForm extends javax.swing.JFrame {
@@ -24,6 +24,11 @@ public class MainForm extends javax.swing.JFrame {
         initComponents();
     }
     
+    /**
+    *  Columns represented in csv file   
+    */ 
+    private final String[] columns = new String[]{ "First Name", "Last Name", "Email Address", "Password", "Secondary Email", "Mobile Phone", "Department"};
+   
     private String inputFile;
     private String outputFile;
     /**
@@ -167,7 +172,7 @@ public class MainForm extends javax.swing.JFrame {
      * Choose output file event handler
      */
     private void ChooseOuputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChooseOuputButtonActionPerformed
-       FileDialog dialog = new FileDialog(this, "Choose a file", FileDialog.SAVE);
+        FileDialog dialog = new FileDialog(this, "Choose a file", FileDialog.SAVE);
         dialog.setDirectory("C:\\");
         dialog.setFile("*.docx");
         dialog.setVisible(true);
@@ -196,8 +201,9 @@ public class MainForm extends javax.swing.JFrame {
         }
         
         try { 
+            DocumentGenerator generator = new DocumentGenerator();
             // generate DocX document
-            XWPFDocument document = DocumentGenerator.generateDocx(content);
+            XWPFDocument document = generator.generateDocx(columns, content);
             // save document to file
             document.write(new FileOutputStream(new File(outputFile)));
             document.close();
