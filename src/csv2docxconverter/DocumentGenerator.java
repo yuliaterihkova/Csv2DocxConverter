@@ -7,6 +7,8 @@ package csv2docxconverter;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Objects;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -23,11 +25,11 @@ public class DocumentGenerator {
     
     /**
     * Generate DocX element from list of the rows containing account information
-     * @param columnNumbers a list of columns for data parsing
-     * @param content list of data rows for parsing
+     * @param columnNames a list of columns for data parsing
+     * @param contents list of data rows for parsing
      * @return an XWPFDocument representing a DocX file
     */        
-    public XWPFDocument generateDocx(int[] columnNumbers, List content){
+    public XWPFDocument generateDocx(String[] columnNames, List contents){
         XWPFDocument document = new XWPFDocument();
 
         // create title
@@ -37,33 +39,49 @@ public class DocumentGenerator {
         titleRun.setText("G SUITE created accounts");
         titleRun.setFontSize(18); 
         
-        // create account table
-        XWPFTable table = document.createTable();
-        // set "justified" alignment
-        table.getCTTbl().addNewTblPr().addNewTblW().setW(BigInteger.valueOf(10000));
-        
-        //create header for table
-        setHeader(table, columnNumbers);
-        
-        // if account list is empty
-        if(content == null || content.size() == 0){
-            // add empty row to the table
-            XWPFTableRow emptyRow = table.createRow();
-        }else{
-            // create rows in table
-            for(Object object : content) {
-                String[] csvRow = (String[]) object;
-                
-                XWPFTableRow row = table.createRow();
-                //create cells in a row
-                for(int i = 0; i < columnNumbers.length; i++){
-                    int number = columnNumbers[i];
-                    
-                    XWPFTableCell cell = row.getCell(i);
-                    if(cell != null){
-                        XWPFRun run = setBodyCell(cell);
-                        if(number - 1 < csvRow.length){
-                            run.setText(csvRow[number - 1]);
+        for (Object content : contents) {
+            List tableContent = (List)content;
+            
+            // create title
+            title = document.createParagraph();
+            title.setAlignment(ParagraphAlignment.CENTER);
+            titleRun = title.createRun();
+            titleRun.setText("Table");
+            titleRun.setFontSize(18);
+
+             // create account table
+            XWPFTable table = document.createTable();
+            // set "justified" alignment
+            table.getCTTbl().addNewTblPr().addNewTblW().setW(BigInteger.valueOf(10000));
+       
+            //create header for table
+            setHeader(table, columnNames);
+         
+            // if account list is empty
+            if(tableContent == null || tableContent.size() == 0){
+                // add empty row to the table
+                XWPFTableRow emptyRow = table.createRow();
+            }else{
+                String[] headerRow = null;
+                // create rows in table
+                for(int i = 0; i < tableContent.size(); i++){  
+                    if(i == 0){
+                        headerRow = (String[]) tableContent.get(i);
+                        continue;
+                    }
+                    String[] csvRow = (String[]) tableContent.get(i);
+
+                    XWPFTableRow row = table.createRow();
+                    //create cells in a row
+                    for(int j = 0; j < columnNames.length; j++){
+                        int number = getColumnNumber(columnNames[j], headerRow);
+
+                        XWPFTableCell cell = row.getCell(i);
+                        if(cell != null){
+                            XWPFRun run = setBodyCell(cell);
+                            if(number - 1 < csvRow.length){
+                                run.setText(csvRow[number - 1]);
+                            }
                         }
                     }
                 }
@@ -72,18 +90,31 @@ public class DocumentGenerator {
         
         return document;
     }
-     
+    
+    /**
+     * Get number of column from column list
+     * @param name name for look
+     * @param columnNames columns list
+     */
+    private int getColumnNumber(String name, String[] columnNames){
+        for(int i = 0; i < columnNames.length; i++){   
+            String name2 = columnNames[i].toLowerCase();
+            if(name.equals(name2)){
+                return i;
+            }
+        }
+        return -1;
+    }
+    
     /**
     * Create header for a table
     */  
-    private void setHeader(XWPFTable table, int[] columnNumbers){
+    private void setHeader(XWPFTable table, String[] columnNames){
         // set initial cell
         XWPFTableRow tableRowOne = table.getRow(0);    
 
         // add other cells
-        for(int i = 0; i < columnNumbers.length; i++){
-            int number = columnNumbers[i];
-             
+        for(int i = 0; i < columnNames.length; i++){             
             XWPFTableCell cell;
             if(i == 0){
                 cell = tableRowOne.getCell(0);
@@ -91,7 +122,7 @@ public class DocumentGenerator {
                 cell = tableRowOne.addNewTableCell();
             }
             XWPFRun run = setHeaderCell(cell);
-            run.setText(Integer.toString(number));
+            run.setText(columnNames[i]);
         }
     }
     

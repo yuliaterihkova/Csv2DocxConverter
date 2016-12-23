@@ -1,6 +1,7 @@
 package csv2docxconverter;
 
 import com.opencsv.CSVReader;
+import java.awt.FileDialog;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -25,7 +26,7 @@ public class MainForm extends javax.swing.JFrame {
     }
 
     private String inputDirectory;
-    private String outputDirectory;
+    private String outputFile;
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -69,7 +70,7 @@ public class MainForm extends javax.swing.JFrame {
         });
 
         OutputTextField.setEditable(false);
-        OutputTextField.setText("Choose files location...");
+        OutputTextField.setText("Choose file location...");
         OutputTextField.setToolTipText("");
 
         ChooseOuputButton.setText("Choose");
@@ -87,7 +88,7 @@ public class MainForm extends javax.swing.JFrame {
 
         jLabel1.setText("Input CSV files");
 
-        jLabel2.setText("Output DOC\\DOCX files");
+        jLabel2.setText("Output DOC\\DOCX file");
 
         GenerateButton.setText("Generate");
         GenerateButton.setToolTipText("");
@@ -105,7 +106,7 @@ public class MainForm extends javax.swing.JFrame {
 
         jLabel3.setText("CSV columns");
 
-        ColumnsTextField.setText("1, 2, 3");
+        ColumnsTextField.setText("FirstName, Password, Email");
         ColumnsTextField.setToolTipText("Comma-separated column nubers or empty to use all");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -175,59 +176,61 @@ public class MainForm extends javax.swing.JFrame {
             InputTextField.setText("Choose files directory...");
         }
         
-        boolean enabled = inputDirectory != null && outputDirectory != null;
+        boolean enabled = inputDirectory != null && outputFile != null;
         GenerateButton.setEnabled(enabled);
     }//GEN-LAST:event_ChooseInputButtonActionPerformed
     /**
      * Choose output file event handler
      */
     private void ChooseOuputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChooseOuputButtonActionPerformed
-        JFileChooser dialog = new JFileChooser();
-        dialog.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        dialog.setDialogTitle("Choose a directory");
+        FileDialog dialog = new FileDialog(this, "Choose a file", FileDialog.LOAD);
+        dialog.setDirectory("C:\\");
+        dialog.setFile("*.docx");
+        dialog.setVisible(true);
         
-        if (dialog.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File file = dialog.getSelectedFile();
-            outputDirectory = file.getAbsolutePath();
-            OutputTextField.setText(outputDirectory);
-        } else {
-            OutputTextField.setText("Choose files directory...");
-        }  
+        String filename = dialog.getDirectory() + "\\" + dialog.getFile();
+         if (filename == null){
+            OutputTextField.setText("Choose file location...");
+         }
+         else{
+            outputFile = filename;
+            OutputTextField.setText(outputFile);
+         } 
         
-        boolean enabled = inputDirectory != null && outputDirectory != null;
+        boolean enabled = inputDirectory != null && outputFile != null;
         GenerateButton.setEnabled(enabled);
     }//GEN-LAST:event_ChooseOuputButtonActionPerformed
     /**
      * Convert file event handler
      */
     private void GenerateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GenerateButtonActionPerformed
-        // load column numbers
+        // load column names
         String columnsText = ColumnsTextField.getText();
-        String[] columns = columnsText.trim().split(",");
-        int[] columnNumbers = new int[columns.length];       
-        for(int i = 0; i < columnNumbers.length; i++){
-            columnNumbers[i] =  Integer.parseInt(columns[i].trim());
+        String[] columns = columnsText.trim().split(",");    
+        for(int i = 0; i < columns.length; i++){
+            columns[i] = columns[i].trim().toLowerCase();
         }
         
-        List content = null;   
+        List contents = new ArrayList();  
         
         try {
+            DocumentGenerator generator = new DocumentGenerator();
+            
             List files = loadFiles(inputDirectory, "csv");
             for (Object object : files) {
                 File file = (File)object;
                 String path = file.getAbsolutePath();
 
                 CSVReader reader = new CSVReader(new FileReader(path));
-                content = reader.readAll();
-                
-                DocumentGenerator generator = new DocumentGenerator();
-                // generate DocX document
-                XWPFDocument document = generator.generateDocx(columnNumbers, content);
-                // save document to file
-                String name = outputDirectory + "\\" + getFileName(file) + ".docx";
-                document.write(new FileOutputStream(new File(name)));
-                document.close();
+                List content = reader.readAll();
+                contents.add(content);
             }
+
+            // generate DocX document
+            XWPFDocument document = generator.generateDocx(columns, contents);
+            // save document to file
+            document.write(new FileOutputStream(new File(outputFile)));
+            document.close();       
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -259,6 +262,7 @@ public class MainForm extends javax.swing.JFrame {
         String name = file.getName();
         return name.substring(0, name.lastIndexOf("."));
     }
+    
     /**
      * Get file extension
      * @param file extension for name extraction
