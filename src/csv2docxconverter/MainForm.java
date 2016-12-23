@@ -69,7 +69,7 @@ public class MainForm extends javax.swing.JFrame {
         });
 
         OutputTextField.setEditable(false);
-        OutputTextField.setText("Choose file location...");
+        OutputTextField.setText("Choose files location...");
         OutputTextField.setToolTipText("");
 
         ChooseOuputButton.setText("Choose");

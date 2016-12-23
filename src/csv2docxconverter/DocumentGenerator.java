@@ -62,7 +62,7 @@ public class DocumentGenerator {
                     XWPFTableCell cell = row.getCell(i);
                     if(cell != null){
                         XWPFRun run = setBodyCell(cell);
-                        if(number - 1 <= csvRow.length){
+                        if(number - 1 < csvRow.length){
                             run.setText(csvRow[number - 1]);
                         }
                     }
