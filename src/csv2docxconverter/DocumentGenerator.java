@@ -23,7 +23,7 @@ public class DocumentGenerator {
     
     /**
     * Generate DocX element from list of the rows containing account information
-     * @param columns a list of columns for data parsing
+     * @param columnNumbers a list of columns for data parsing
      * @param content list of data rows for parsing
      * @return an XWPFDocument representing a DocX file
     */        

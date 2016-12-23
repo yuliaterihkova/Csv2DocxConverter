@@ -1,13 +1,10 @@
 package csv2docxconverter;
 
 import com.opencsv.CSVReader;
-import java.awt.FileDialog;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
