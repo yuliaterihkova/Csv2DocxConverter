@@ -185,7 +185,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="ColumnsTextField">
       <Properties>
-        <Property name="text" type="java.lang.String" value="FirstName, Password, Email"/>
+        <Property name="text" type="java.lang.String" value="FirstName, LastName, Email, Password"/>
         <Property name="toolTipText" type="java.lang.String" value="Comma-separated column nubers or empty to use all"/>
       </Properties>
     </Component>

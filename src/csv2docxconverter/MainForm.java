@@ -106,7 +106,7 @@ public class MainForm extends javax.swing.JFrame {
 
         jLabel3.setText("CSV columns");
 
-        ColumnsTextField.setText("FirstName, Password, Email");
+        ColumnsTextField.setText("FirstName, LastName, Email, Password");
         ColumnsTextField.setToolTipText("Comma-separated column nubers or empty to use all");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

@@ -6,6 +6,7 @@
 package csv2docxconverter;
 
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.lang3.ArrayUtils;
@@ -38,15 +39,15 @@ public class DocumentGenerator {
         XWPFRun titleRun = title.createRun();
         titleRun.setText("G SUITE created accounts");
         titleRun.setFontSize(18); 
-        
-        for (Object content : contents) {
-            List tableContent = (List)content;
+       
+        for(int k = 0; k < contents.size(); k++) {
+            List tableContent = (List)contents.get(k);
             
             // create title
             title = document.createParagraph();
             title.setAlignment(ParagraphAlignment.CENTER);
             titleRun = title.createRun();
-            titleRun.setText("Table");
+            titleRun.setText("Table " + (k + 1));
             titleRun.setFontSize(18);
 
              // create account table
@@ -76,11 +77,11 @@ public class DocumentGenerator {
                     for(int j = 0; j < columnNames.length; j++){
                         int number = getColumnNumber(columnNames[j], headerRow);
 
-                        XWPFTableCell cell = row.getCell(i);
+                        XWPFTableCell cell = row.getCell(j);
                         if(cell != null){
                             XWPFRun run = setBodyCell(cell);
-                            if(number - 1 < csvRow.length){
-                                run.setText(csvRow[number - 1]);
+                            if(number >= 0 && number < csvRow.length){
+                                run.setText(csvRow[number]);
                             }
                         }
                     }
@@ -97,9 +98,9 @@ public class DocumentGenerator {
      * @param columnNames columns list
      */
     private int getColumnNumber(String name, String[] columnNames){
-        for(int i = 0; i < columnNames.length; i++){   
-            String name2 = columnNames[i].toLowerCase();
-            if(name.equals(name2)){
+        for(int i = 0; i < columnNames.length; i++){  
+            String name2 = columnNames[i].trim().toLowerCase();
+            if(name.contentEquals(name2)){
                 return i;
             }
         }
