@@ -1,0 +1,1 @@
+Csv2Docx is an utility for convertion of automatically generated csv files containing account data for G Suite. Csv2Docx combines flexible customization of input data layout and an ability of batch data processing, giving you the full capabilities of partial automatization of workflow.
